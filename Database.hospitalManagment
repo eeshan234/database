@@ -1,0 +1,93 @@
+CREATE TABLE Patients (
+    patient_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    age INT,
+    phone VARCHAR(15)
+);
+CREATE TABLE Doctors (
+    doctor_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    specialization VARCHAR(50)
+);
+CREATE TABLE Appointments (
+    appointment_id INT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    appointment_date DATE,
+    
+    FOREIGN KEY (patient_id) REFERENCES Patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id)
+);
+CREATE TABLE Billing (
+    bill_id INT PRIMARY KEY,
+    patient_id INT,
+    amount DECIMAL(10,2),
+    
+    FOREIGN KEY (patient_id) REFERENCES Patients(patient_id)
+);
+-- =========================================
+INSERT INTO Patients VALUES
+(1,'Ali',22,'03001234567'),
+(2,'Ahmed',25,'03111234567'),
+(3,'Usman',30,'03211234567');
+
+INSERT INTO Doctors VALUES
+(101,'Dr. Hassan','Cardiologist'),
+(102,'Dr. Sara','Dentist'),
+(103,'Dr. Ayesha','Neurologist');
+
+INSERT INTO Appointments VALUES
+(1,1,101,'2026-05-10'),
+(2,2,102,'2026-05-11'),
+(3,3,103,'2026-05-12');
+
+INSERT INTO Billing VALUES
+(1,1,5000),
+(2,2,3000),
+(3,3,7000);
+
+SELECT * FROM Patients;
+SELECT * FROM Doctors;
+SELECT * FROM Appointments;
+SELECT * FROM Billing;
+
+SELECT 
+    p.name AS Patient_Name,
+    d.name AS Doctor_Name,
+    a.appointment_date
+FROM Appointments a
+JOIN Patients p ON a.patient_id = p.patient_id
+JOIN Doctors d ON a.doctor_id = d.doctor_id;
+
+SELECT COUNT(*) AS Total_Patients FROM Patients;
+
+SELECT SUM(amount) AS Total_Billing FROM Billing;
+
+SELECT AVG(amount) AS Average_Billing FROM Billing;
+
+SELECT name
+FROM Patients
+WHERE patient_id IN (
+    SELECT patient_id
+    FROM Billing
+    WHERE amount > 4000
+);
+
+CREATE VIEW PatientBills AS
+SELECT p.name, b.amount
+FROM Patients p
+JOIN Billing b ON p.patient_id = b.patient_id;
+
+SELECT * FROM PatientBills;
+
+UPDATE Patients
+SET age = 26
+WHERE patient_id = 1;
+
+DELETE FROM Billing
+WHERE bill_id = 3;
+
+ALTER TABLE Patients
+ADD email VARCHAR(100);
+
+SELECT * FROM Patients;
